@@ -1,0 +1,32 @@
+action_selector: "multinomial"
+epsilon_start: .0
+epsilon_finish: .0
+epsilon_anneal_time: 100000
+mask_before_softmax: True
+
+train_buffer_size: 8
+train_batch_size: 8
+update_rate: 8
+
+obs_agent_id: True
+
+lr: 0.0005
+critic_coef: 0.5
+entropy: 0.01
+gae_lambda: 0.95
+mini_epochs: 8
+eps_clip: 0.2
+save_probs: True
+dual_clip: 0
+use_vtrace: False
+
+agent_output_type: "pi_logits"
+learner: "ppo_learner"
+
+use_layer_norm: True
+use_orthogonal: True
+gain: 0.01
+use_value_norm: True
+
+critic_type: ac_rnn_critic
+agent: rnn
