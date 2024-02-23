@@ -4,9 +4,9 @@ epsilon_finish: .0
 epsilon_anneal_time: 100000
 mask_before_softmax: True
 
-train_buffer_size: 8
-train_batch_size: 8
-update_rate: 8
+train_buffer_size: 64
+train_batch_size: 64
+update_rate: 16
 
 obs_agent_id: True
 
@@ -14,7 +14,7 @@ lr: 0.0005
 critic_coef: 0.5
 entropy: 0.01
 gae_lambda: 0.95
-mini_epochs: 8
+mini_epochs: 6
 eps_clip: 0.2
 save_probs: True
 dual_clip: 0
@@ -25,8 +25,8 @@ learner: "ppo_learner"
 
 use_layer_norm: True
 use_orthogonal: True
-gain: 0.01
 use_value_norm: True
+gain: 0.01
 
 critic_type: ac_rnn_critic
 agent: rnn

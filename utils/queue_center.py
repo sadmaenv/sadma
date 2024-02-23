@@ -1,7 +1,6 @@
 from multiprocessing import Queue
 
 
-# todo 增加超时检测
 class QueueCenter:
     def __init__(self, args):
         self.local_mode = args.local

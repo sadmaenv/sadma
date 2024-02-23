@@ -44,9 +44,10 @@ class QLearner:
         mask = batch["filled"][:, :-1].float()
         mask[:, 1:] = mask[:, 1:] * (1 - terminated[:, :-1])
         mac_out = []
-        self.mac.init_hidden(self.train_batch_size)
+        hidden_states = self.mac.init_hidden(self.train_batch_size)
         for t in range(max_length):
             inputs = {}
+            inputs["hidden_states"] = hidden_states
             inputs["obs"] = obs[:, t]
             inputs["avail_actions"] = avail_actions[:, t]
             if self.args.obs_last_action:
@@ -54,16 +55,17 @@ class QLearner:
                     inputs["actions_onehot"] = torch.zeros_like(inputs["avail_actions"])
                 else:
                     inputs["actions_onehot"] = actions_onehot[:, t - 1]
-            agent_outs = self.mac.inference(inputs)
+            agent_outs, hidden_states = self.mac.inference(inputs)
             mac_out.append(agent_outs)
 
         mac_out = torch.stack(mac_out, dim=1)
         chosen_action_qvals = torch.gather(mac_out[:, :-1], dim=3, index=actions).squeeze(3)  # Remove the last dim
         with torch.no_grad():
             target_mac_out = []
-            self.target_mac.init_hidden(self.train_batch_size)
+            hidden_states = self.target_mac.init_hidden(self.train_batch_size)
             for t in range(max_length):
                 inputs = {}
+                inputs["hidden_states"] = hidden_states
                 inputs["obs"] = obs[:, t]
                 inputs["avail_actions"] = avail_actions[:, t]
                 if self.args.obs_last_action:
@@ -71,7 +73,7 @@ class QLearner:
                         inputs["actions_onehot"] = torch.zeros_like(inputs["avail_actions"])
                     else:
                         inputs["actions_onehot"] = actions_onehot[:, t - 1]
-                agent_outs = self.target_mac.inference(inputs)
+                agent_outs, hidden_states = self.target_mac.inference(inputs)
                 target_mac_out.append(agent_outs)
             target_mac_out = torch.stack(target_mac_out, dim=1)
             mac_out_detach = mac_out.clone().detach()
@@ -134,5 +136,6 @@ class QLearner:
         self.mac.load_models(path)
         self.target_mac.load_models(path)
         if self.mixer is not None:
-            self.mixer.load_state_dict(torch.load("{}/mixer.th".format(path), map_location=lambda storage, loc: storage))
+            self.mixer.load_state_dict(
+                torch.load("{}/mixer.th".format(path), map_location=lambda storage, loc: storage))
         self.optimiser.load_state_dict(torch.load("{}/opt.th".format(path), map_location=lambda storage, loc: storage))

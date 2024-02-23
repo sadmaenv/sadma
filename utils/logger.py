@@ -5,7 +5,7 @@ from torch.utils.tensorboard import SummaryWriter
 import copy
 import numpy as np
 from collections import defaultdict
-import torch as th
+import torch
 
 
 class Logger:
@@ -54,17 +54,16 @@ class Logger:
     def log_env_info(self, env_infos, total_step):
         for env_info in env_infos:
             for k, v in env_info.items():
-                self.log_stat(k, v, total_step)
+                self.stats[k].append((total_step, v))
 
     def log_info(self, msg):
         self.info_logger.info(msg)
-
-    def log_stat(self, key, value, t):
-        self.stats[key].append((t, value))
-
-        if self.args.use_tensorboard:
-            self.tensor_logger.add_scalar(key, value, t)
-
+    
+    def log_tensorboard(self, step):
+        for (k, v) in sorted(self.stats.items()):
+            item = torch.mean(torch.tensor([float(x[1]) for x in self.stats[k]])).item()
+            self.tensor_logger.add_scalar(k, item, step)
+            
     def print_recent_stats(self, step, episode):
         log_str = "Recent Stats | t_env: {:>10} | Episode: {:>8}\n".format(step, episode)
         i = 0
@@ -73,10 +72,12 @@ class Logger:
                 continue
             i += 1
             window = 5 if k != "epsilon" else 1
-            item = "{:.4f}".format(th.mean(th.tensor([float(x[1]) for x in self.stats[k][-window:]])))
+            item = "{:.4f}".format(torch.mean(torch.tensor([float(x[1]) for x in self.stats[k][-window:]])))
             log_str += "{:<25}{:>8}".format(k + ":", item)
             log_str += "\n" if i % 4 == 0 else "\t"
         self.log_info(log_str)
+        if self.args.use_tensorboard:
+            self.log_tensorboard(step)
         # Reset stats to avoid accumulating logs in memory
         self.stats = defaultdict(lambda: [])
 

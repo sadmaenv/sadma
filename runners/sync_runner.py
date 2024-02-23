@@ -43,6 +43,5 @@ def sync_run(args):
                 learner.train(train_data, total_episode)
                 del train_data
         if np.all(env_runner.terminated):
-            print("reset")
             episode_buffer.reset_data(bs)
     env_runner.close_env()

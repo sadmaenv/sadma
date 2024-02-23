@@ -69,8 +69,7 @@ def get_input_args(configs):
     parser.add_argument("--seed", type=int, default=1, help="seed of the experiment")
     parser.add_argument("--alg", type=str, default="ippo", help="algorithm")
     parser.add_argument("--env_type", type=str, default="replenishment", help="env type")
-    # parser.add_argument("--map_name", type=str, default="3m", help="map name")
-    parser.add_argument("--map-name", type=str, default="sku1000.single_store.standard", help="map name")
+    parser.add_argument("--map_name", type=str, default="sku1000.single_store.standard", help="map name")
     parser.add_argument("--train_device", type=str, default="cuda:6", help="train device")
     parser.add_argument("--env_batch_size", type=int, default=8, help="number of parallel env batch size")
 
@@ -93,6 +92,7 @@ def get_input_args(configs):
     configs["async_train"] = args.async_train
     configs["num_sample_worker"] = args.num_sample_worker
     configs["local"] = args.local
+    configs["sampler_id"] = args.sampler_id
     return configs
 
 

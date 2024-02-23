@@ -2,7 +2,6 @@ from utils.rl_utils import build_gae_targets, categorical_entropy, ValueNorm, bu
 import torch
 from torch.optim import Adam
 from modules.critics import REGISTRY as critic_resigtry
-import numpy as np
 
 
 class PPOLearner:
@@ -17,7 +16,6 @@ class PPOLearner:
         self.train_batch_size = args.train_batch_size
         self.last_target_update_step = 0
         self.critic_training_steps = 0
-
         self.critic = critic_resigtry[args.critic_type](args)
         self.cuda()
         self.params = list(mac.parameters()) + list(self.critic.parameters())
@@ -49,7 +47,7 @@ class PPOLearner:
         with torch.no_grad():
             if "rnn" in self.args.critic_type:
                 old_values = []
-                hidden_states = self.critic.init_hidden(self.train_batch_size)
+                hidden_states = torch.zeros(self.train_batch_size, self.args.n_agents, self.args.hidden_dim).to(actions.device)
                 for t in range(max_seq_length):
                     inputs = {}
                     inputs["obs"] = batch["obs"][:, t]
@@ -117,7 +115,7 @@ class PPOLearner:
             # Critic
             if "rnn" in self.args.critic_type:
                 values = []
-                hidden_states = self.critic.init_hidden(self.train_batch_size)
+                hidden_states = torch.zeros(self.train_batch_size, self.args.n_agents, self.args.hidden_dim).to(actions.device)
                 for t in range(max_seq_length - 1):
                     inputs = {}
                     inputs["obs"] = batch["obs"][:, t]
@@ -164,6 +162,10 @@ class PPOLearner:
             self.mac.agent_version += 1
 
     def cuda(self):
+        if self.args.use_dp:
+            self.critic = torch.nn.DataParallel(self.critic)
+            self.mac.set_dp()
+
         self.mac.to(self.device)
         self.critic.to(self.device)
 

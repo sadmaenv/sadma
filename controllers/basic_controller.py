@@ -77,6 +77,9 @@ class BasicMAC:
     def load_agent_state(self, agent_state_dict):
         self.agent.load_state_dict(agent_state_dict)
 
+    def set_dp(self):
+        self.agent = torch.nn.DataParallel(self.agent)
+
     def to(self, device):
         self.device = device
         self.agent.to(device)

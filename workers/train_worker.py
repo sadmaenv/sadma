@@ -3,6 +3,7 @@ from utils.buffers import ReplayBuffer
 from torch.multiprocessing import Process
 from workers.base_worker import BaseWorker
 import torch
+from torch.utils.data import DataLoader
 
 
 class TrainWorker(BaseWorker):

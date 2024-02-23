@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 from utils.utils import make_batch
+from torch.utils.data import Dataset, DataLoader
 
 
 class BaseBuffer:
@@ -134,3 +135,18 @@ class ReplayBuffer(BaseBuffer):
             batch_episodes[name] = value[index]
         batch_episodes = make_batch(batch_episodes, self.train_device)
         return batch_episodes
+
+
+class TrainBatch(Dataset):
+    def __init__(self, batch_size, data):
+        self.data = data
+        self.batch_size = batch_size
+
+    def __len__(self):
+        return self.batch_size
+
+    def __getitem__(self, idx):
+        result_data = {}
+        for k, v in self.data.items():
+            result_data[k] = v[idx]
+        return result_data

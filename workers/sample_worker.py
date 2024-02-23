@@ -5,6 +5,7 @@ from workers.zmq_worker import InferClient
 from torch.multiprocessing import Process
 from workers.base_worker import BaseWorker
 from utils.utils import get_bs
+import torch
 
 
 class LocalSampleWorker(BaseWorker):
@@ -19,6 +20,7 @@ class LocalSampleWorker(BaseWorker):
         self.job = Process(target=self.without_model_sample)
 
     def without_model_sample(self):
+        torch.set_num_threads(1)
         self.queue_center.put("log", {"type": "info", "msg": f"sample{self.worker_id} worker start"})
         stop_sample = False
         if self.args.num_env_runner == 1:

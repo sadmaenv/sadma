@@ -3,8 +3,6 @@ import numpy as np
 from utils.utils import get_bs
 from functools import partial
 from threading import Thread
-import pickle
-import torch
 import json
 
 
@@ -116,7 +114,6 @@ class InferServer:
                     datas = {}
                     for idx, name in enumerate(self.recv_dt.names):
                         datas[name] = recv_datas[idx]
-
                     info = json.loads(info.decode())
                     runner_id = info["runner_id"]
                     ts = np.array(info["envs_step"])
