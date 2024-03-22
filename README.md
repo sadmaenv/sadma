@@ -26,6 +26,7 @@ Set up env StarCraft II (2.4.10) and SMAC. More detail could be found at [pymarl
 Set up env CityFlow. More detail could be found at [Installation Guide](https://cityflow.readthedocs.io/en/latest/install.html). Build From Source is recommended
 
     pip install git+https://github.com/cityflow-project/CityFlow.git
+    pip install git+https://github.com/BackMountainDevil/cityflow-pypi.git
 
 Set up env ReplenishmentEnv. More detail could be found at [here](https://github.com/VictorYXL/ReplenishmentEnv)
 
