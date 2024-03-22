@@ -1,0 +1,25 @@
+train_buffer_size: 32
+train_batch_size: 32
+update_rate: 8
+
+
+lr: 0.0005
+critic_coef: 0.5
+entropy: 0.01
+gae_lambda: 0.95
+mini_epochs: 4
+eps_clip: 0.2
+save_log_probs: True
+dual_clip: 0
+use_vtrace: False
+
+agenet_type: rnn
+critic_type: rnn
+agent_inputs: ["obs", "agent_id", "last_action"]
+# ["state", "independent_obs", "central_obs" "agent_id", "last_action"]
+critic_inputs: ["central_obs"]
+
+use_layer_norm: True
+use_orthogonal: True
+use_value_norm: True
+gain: 0.01

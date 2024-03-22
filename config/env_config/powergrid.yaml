@@ -1,0 +1,7 @@
+env: powergrid
+
+env_args:
+  climate_zone: "Climate_Zone_1"
+
+env_type: continuous
+max_steps: 1000000

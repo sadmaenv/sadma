@@ -1,0 +1,13 @@
+env: "replenishment"
+
+env_args:
+  key: "replenishment_efficient_env-v0"
+  map_name: "sku1000.standard"
+  n_agents: 1000
+  task_type: "sku1000.single_store.standard"
+  mode: train
+  time_limit: 21
+  reward: "reward2"
+
+max_steps: 2000000
+env_type: discrete

@@ -1,11 +1,12 @@
+import copy
 import json
 import logging
 import os
-from torch.utils.tensorboard import SummaryWriter
-import copy
-import numpy as np
 from collections import defaultdict
 import torch
+from torch.utils.tensorboard import SummaryWriter
+import numpy as np
+from utils.utils import mkdir
 
 
 class Logger:
@@ -20,16 +21,21 @@ class Logger:
         # logger
         self.info_logger = logging.getLogger("logger")
         handlers = []
-        formatter = logging.Formatter('[%(levelname)s %(asctime)s] %(message)s', '%H:%M:%S')
+        formatter = logging.Formatter("[%(levelname)s %(asctime)s] %(message)s", "%H:%M:%S")
         sh = logging.StreamHandler()
         sh.setFormatter(formatter)
         handlers.append(sh)
 
         if args.save_log:
             # mkdir
-            path_root = os.path.join(os.getcwd(), args.log_root_path, args.algorithm, args.map_name, args.unique_token)
-            mkdirs = lambda folder_path: os.makedirs(folder_path, exist_ok=True) if not os.path.exists(folder_path) else None
-            mkdirs(path_root)
+            path_root = os.path.join(
+                os.getcwd(),
+                args.log_root_path,
+                args.algorithm,
+                args.map_name,
+                args.unique_token,
+            )
+            mkdir(path_root)
             # save args
             args_log = copy.deepcopy(args)
             get_numpy_type_name = lambda x: np.zeros(1, dtype=x).dtype.name
@@ -51,28 +57,31 @@ class Logger:
             self.info_logger.addHandler(handler)
         self.info_logger.setLevel(logging.INFO)
 
-    def log_env_info(self, env_infos, total_step):
-        for env_info in env_infos:
-            for k, v in env_info.items():
-                self.stats[k].append((total_step, v))
+    def log_metrics(self, metrics, total_steps):
+        if isinstance(metrics, list) and len(metrics) > 0:
+            for metric in metrics:
+                for k, v in metric.items():
+                    self.stats[k].append((total_steps, v))
+        elif isinstance(metrics, dict):
+            for k, v in metrics.items():
+                self.stats[k].append((total_steps, v))
 
     def log_info(self, msg):
         self.info_logger.info(msg)
-    
+
     def log_tensorboard(self, step):
         for (k, v) in sorted(self.stats.items()):
             item = torch.mean(torch.tensor([float(x[1]) for x in self.stats[k]])).item()
             self.tensor_logger.add_scalar(k, item, step)
-            
+
     def print_recent_stats(self, step, episode):
         log_str = "Recent Stats | t_env: {:>10} | Episode: {:>8}\n".format(step, episode)
         i = 0
-        for (k, v) in sorted(self.stats.items()):
+        for k, v in sorted(self.stats.items()):
             if k == "episode":
                 continue
             i += 1
-            window = 5 if k != "epsilon" else 1
-            item = "{:.4f}".format(torch.mean(torch.tensor([float(x[1]) for x in self.stats[k][-window:]])))
+            item = "{:.4f}".format(torch.mean(torch.tensor([float(x[1]) for x in self.stats[k]])))
             log_str += "{:<25}{:>8}".format(k + ":", item)
             log_str += "\n" if i % 4 == 0 else "\t"
         self.log_info(log_str)

@@ -1,0 +1,37 @@
+# --- Log ---
+log_root_path: results
+save_log: True
+use_tensorboard: True
+log_interval_step: 500
+log_interval_episode: 32
+
+# --- RL hyperparameters ---
+gamma: 0.99
+lr: 0.0005
+optim_alpha: 0.99
+optim_eps: 0.00001
+grad_norm_clip: 10
+
+# --- Agent parameters ---
+agent_type: rnn
+hidden_dim: 64
+agent_inputs: ["obs", "agent_id", "last_action"]
+save_log_probs: False
+use_individual_rewards: False
+
+# --- evaluate ---
+evaluate: False
+evaluate_episodes: 32
+evaluate_interval: 10000
+evaluate_batch_size: 2
+
+# --- sample ---
+num_env_runner: 1
+asynchronous_env: True
+shared_buffer_size: 8
+
+# --- infer ---
+base_port: 16400
+num_inference_worker: 1
+infer_batch_size: 1
+infer_device: cuda

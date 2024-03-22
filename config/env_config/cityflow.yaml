@@ -1,0 +1,14 @@
+env: cityflow
+
+env_args:
+  interval: 1.0
+  yellow_time: 5
+  thread_num: 1
+  lane_change: True  
+  save_replay: False  
+  eight_phase: True  
+  list_state_feature: ["cur_phase", "lane_queue_vehicle_in"]
+  dic_reward_info: {"queue_length": -0.25}
+
+env_type: discrete
+max_steps: 10000000
