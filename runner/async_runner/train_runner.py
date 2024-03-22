@@ -59,7 +59,7 @@ def train_run(args):
             logger.log_info(log["msg"])
         if log.get("type", None) == "data":
             logger.log_metrics(log["msg"], current_step)
-        if (current_step - last_log_T) >= args.log_interval:
+        if (current_step - last_log_T) >= args.log_interval_step:
             logger.print_recent_stats(current_step, current_episode)
             last_log_T = current_step
         if current_step - last_evaluate_T >= args.evaluate_interval and args.evaluate:
