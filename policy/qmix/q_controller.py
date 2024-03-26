@@ -25,7 +25,7 @@ class QController(BaseController):
         pick_random = (random_numbers < epsilon).long()
         random_actions = Categorical(data["available_actions"].float()).sample().long()
         actions = (pick_random * random_actions + (1 - pick_random) * q.max(dim=2)[1])
-        results = {"actions": actions.unsqueeze(-1).cpu()}
+        results = {"actions": actions.cpu()}
         if "rnn" in self.args.agent_type:
             results["hidden_states"] = hidden_states.cpu()
         return results

@@ -36,8 +36,8 @@ def update_args(args):
     # 将时间当前戳转换为自定义格式的字符串
     formatted_time = time.strftime("%Y%m%d-%H:%M:%S", time.localtime(time.time()))
     args.unique_token = f"seed{args.seed}_{formatted_time}"
-    args.log_path = os.path.join(os.getcwd(), args.log_root_path, args.algorithm, args.map_name, args.unique_token)
-    if args.save_log:
+    args.log_path = os.path.join(os.getcwd(), args.log_root_path, args.exp_name, args.algorithm, args.map_name, args.unique_token)
+    if args.save_log or args.use_tensorboard:
         mkdir(args.log_path)
     if args.env == "cityflow":
         mkdir(args.log_path)
@@ -67,13 +67,12 @@ def update_args(args):
 
 def get_input_args(configs):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--exp_name", type=str, default="", help="experiment name")
+    parser.add_argument("--exp_name", type=str, default="test", help="experiment name")
     parser.add_argument("--seed", type=int, default=1, help="seed of the experiment")
     parser.add_argument("--alg", type=str, default="ppo", help="algorithm")
-    parser.add_argument("--env", type=str, default="cityflow", help="env type: smac cityflow powergrid")
-    parser.add_argument("--map_name", type=str, default="jinan", help="map name. 3m cityflow:[jinan, hangzhou, newyork]")
-    # parser.add_argument("--map-name", type=str, default="sku1000.single_store.standard", help="map name")
-    parser.add_argument("--train_device", type=str, default="cuda:0", help="train device")
+    parser.add_argument("--env", type=str, default="smac", help="env type: smac cityflow powergrid")
+    parser.add_argument("--map_name", type=str, default="3m", help="map name. 3m cityflow:[jinan, hangzhou, newyork]")
+    parser.add_argument("--train_device", type=str, default="cuda", help="train device")
     parser.add_argument("--env_batch_size", type=int, default=8, help="number of parallel env batch size")
 
     # distribute
@@ -83,7 +82,7 @@ def get_input_args(configs):
     parser.add_argument("--num_sample_worker", type=int, default=1, help="number of sample worker")
     parser.add_argument("--sampler_id", type=int, default=0, help="when use remote, sampler id for assign port",)
     args = parser.parse_args()
-    
+
     configs["exp_name"] = args.exp_name
     configs["seed"] = args.seed
     configs["algorithm"] = args.alg

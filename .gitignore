@@ -1,5 +1,5 @@
 # logging
-/results
+/logdir
 /envs/cityflow/cityflow_data
 /envs/powergrid/data
 # Byte-compiled / optimized / DLL files
