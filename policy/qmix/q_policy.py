@@ -49,7 +49,7 @@ class Qpolicy(BasePolicy):
             agent_outs, hidden_states = self.mac.get_agent_outputs(inputs)
             mac_out.append(agent_outs)
         mac_out = torch.stack(mac_out, dim=1)
-        chosen_action_qvals = torch.gather(mac_out[:, :-1], dim=3, index=actions[:, :-1]).squeeze(3)
+        chosen_action_qvals = torch.gather(mac_out[:, :-1], dim=3, index=actions[:, :-1].unsqueeze(-1)).squeeze(3)
         with torch.no_grad():
             target_mac_out = []
             hidden_states = self.target_mac.init_hidden_states(self.args.train_batch_size)

@@ -1,9 +1,9 @@
 # --- Log ---
-log_root_path: results
+log_root_path: logdir
 save_log: True
 use_tensorboard: True
-log_interval_step: 500
-log_interval_episode: 32
+log_interval_step: 2000
+log_interval_episode: 16
 
 # --- RL hyperparameters ---
 gamma: 0.99

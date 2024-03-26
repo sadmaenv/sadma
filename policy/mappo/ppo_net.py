@@ -166,7 +166,7 @@ class RnnCritic(BaseCritic):
         x = self.layer_norm(hh) if self.use_layer_norm else hh
         v = self.fc2(x)
         if "central_obs" in self.args.critic_inputs:
-            v = v.unsqueeze(1).expand(-1, 3, -1)
+            v = v.unsqueeze(1).expand(-1, a, -1)
             hh = hh.view(b, -1)
         elif "independent_obs" in self.args.critic_inputs:
             v = v.view(b, a, -1)

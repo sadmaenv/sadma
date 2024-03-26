@@ -28,14 +28,7 @@ class Logger:
 
         if args.save_log:
             # mkdir
-            path_root = os.path.join(
-                os.getcwd(),
-                args.log_root_path,
-                args.algorithm,
-                args.map_name,
-                args.unique_token,
-            )
-            mkdir(path_root)
+            path_root = args.log_path
             # save args
             args_log = copy.deepcopy(args)
             get_numpy_type_name = lambda x: np.zeros(1, dtype=x).dtype.name
@@ -49,13 +42,14 @@ class Logger:
             fh = logging.FileHandler(filename=fh_path)
             fh.setFormatter(formatter)
             handlers.append(fh)
-            # add tensorboard
-            if args.use_tensorboard:
-                self.tensor_logger = SummaryWriter(os.path.join(path_root, "tensorboard"))
-
         for handler in handlers:
             self.info_logger.addHandler(handler)
         self.info_logger.setLevel(logging.INFO)
+        
+        # add tensorboard
+        if args.use_tensorboard:
+            self.tensor_logger = SummaryWriter(os.path.join(path_root, "tensorboard"))
+
 
     def log_metrics(self, metrics, total_steps):
         if isinstance(metrics, list) and len(metrics) > 0:
